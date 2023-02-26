@@ -1,0 +1,4 @@
+const MATCH_ID = "56418";
+const REFRESH_TIME_MS = 30000;
+
+export { MATCH_ID, REFRESH_TIME_MS };
