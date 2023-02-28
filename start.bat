@@ -1,0 +1,1 @@
+start node fetcher.js

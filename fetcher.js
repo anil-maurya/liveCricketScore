@@ -15,12 +15,17 @@ const teams = {};
 
 function formatResponse(response) {
   const { matchHeader, miniscore } = response.data;
+
+  // if(!matchHeader || !miniscore){
+  //   console.log(response.data)
+  //   throw new Error('Invalid response received.')
+  // }
   const {
     state,
     status,
     tossResults,
-    team1: { id: id1, name: teamOneName },
-    team2: { id: id2, name: teamTwoName },
+    team1: { id: id1, name: teamOneName } = {},
+    team2: { id: id2, name: teamTwoName } = {},
     seriesName,
     seriesDesc,
   } = matchHeader;
@@ -28,25 +33,25 @@ function formatResponse(response) {
   teams[id1] = teamOneName;
   teams[id2] = teamTwoName;
 
-  const { tossWinnerName, decision } = tossResults;
+  const { tossWinnerName, decision } = tossResults || {};
 
   const {
-    batsmanStriker,
-    batsmanNonStriker,
-    bowlerStriker,
-    bowlerNonStriker,
+    batsmanStriker = {},
+    batsmanNonStriker = {},
+    bowlerStriker= {},
+    bowlerNonStriker = {},
     overs,
     recentOvsStats,
-    batTeam,
-    partnerShip,
+    batTeam = {},
+    partnerShip = {},
     currentRunRate,
     requiredRunRate,
     lastWicket,
     latestPerformance,
-    matchScoreDetails: { inningsScoreList },
-  } = miniscore;
+    matchScoreDetails,
+  } = miniscore || {} ;
 
-  const [lp1 = {}, lp2 = {}] = latestPerformance;
+  const [lp1 = {}, lp2 = {}] = latestPerformance || [];
 
   const aoa = [
     ["Series name", seriesName],
@@ -111,6 +116,8 @@ function formatResponse(response) {
     ["Economy", bowlerNonStriker.bowlEcon],
   ];
 
+  const { inningsScoreList = [] } =  matchScoreDetails || {};
+
   inningsScoreList.forEach((inning) => {
     const {
       inningsId,
@@ -153,13 +160,13 @@ function fetch() {
         console.log(response.status);
       }
     })
-    .catch((error) => console.log("Error", error));
+    .catch((error) => console.log("Error", error.message));
 }
 
 function start() {
   console.log("Starting... done!");
   fetch();
-  // const id = setInterval(fetch, REFRESH_TIME_MS);
+  const id = setInterval(fetch, REFRESH_TIME_MS);
   process.on("SIGINT", () => {
     console.log("Stopping... done!");
     clearInterval(id);
