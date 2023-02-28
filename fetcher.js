@@ -38,7 +38,7 @@ function formatResponse(response) {
   const {
     batsmanStriker = {},
     batsmanNonStriker = {},
-    bowlerStriker= {},
+    bowlerStriker = {},
     bowlerNonStriker = {},
     overs,
     recentOvsStats,
@@ -49,7 +49,7 @@ function formatResponse(response) {
     lastWicket,
     latestPerformance,
     matchScoreDetails,
-  } = miniscore || {} ;
+  } = miniscore || {};
 
   const [lp1 = {}, lp2 = {}] = latestPerformance || [];
 
@@ -116,9 +116,11 @@ function formatResponse(response) {
     ["Economy", bowlerNonStriker.bowlEcon],
   ];
 
-  const { inningsScoreList = [] } =  matchScoreDetails || {};
+  const { inningsScoreList = [] } = matchScoreDetails || {};
 
-  inningsScoreList.forEach((inning) => {
+  inningsScoreList.forEach((_, index, arr) => {
+    const inning = arr[arr.length - 1 - index];
+    // console.log(l);
     const {
       inningsId,
       batTeamId,
@@ -131,7 +133,6 @@ function formatResponse(response) {
     } = inning;
     const battingTeamName = teams[batTeamId];
     [
-      [`${inningsId} Inning`],
       ["Inning No", inningsId],
       ["Batting Team", battingTeamName],
       ["Score", score],
