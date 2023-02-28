@@ -5,7 +5,9 @@ import { MATCH_ID, REFRESH_TIME_MS } from "./config.js";
 
 const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 
-const file = xlsx.readFile("./test.xlsx");
+const fileName = "./score.xlsx";
+
+const file = xlsx.readFile(fileName);
 const sheet_name = file.SheetNames[0];
 const sheet = file.Sheets[sheet_name];
 
@@ -41,6 +43,7 @@ function formatResponse(response) {
     requiredRunRate,
     lastWicket,
     latestPerformance,
+    matchScoreDetails: { inningsScoreList },
   } = miniscore;
 
   const [lp1 = {}, lp2 = {}] = latestPerformance;
@@ -108,6 +111,31 @@ function formatResponse(response) {
     ["Economy", bowlerNonStriker.bowlEcon],
   ];
 
+  inningsScoreList.forEach((inning) => {
+    const {
+      inningsId,
+      batTeamId,
+      score,
+      wickets,
+      overs,
+      isDeclared,
+      isFollowOn,
+      ballNbr,
+    } = inning;
+    const battingTeamName = teams[batTeamId];
+    [
+      [`${inningsId} Inning`],
+      ["Inning No", inningsId],
+      ["Batting Team", battingTeamName],
+      ["Score", score],
+      ["Wickets", wickets],
+      ["Overs", overs],
+      ["Declared", isDeclared ? "Yes" : "No"],
+      ["Follow on", isFollowOn ? "Yes" : "No"],
+      ["Balls", ballNbr],
+    ].forEach((row) => aoa.push(row));
+  });
+
   return aoa;
 }
 
@@ -118,7 +146,7 @@ function fetch() {
       if (response.status === 200) {
         const aoa = formatResponse(response);
         xlsx.utils.sheet_add_aoa(sheet, aoa, { origin: "A1" });
-        xlsx.writeFile(file, "./test.xlsx");
+        xlsx.writeFile(file, fileName);
         const date = new Date();
         console.log("Refreshed..", date.toLocaleTimeString());
       } else {
@@ -131,7 +159,7 @@ function fetch() {
 function start() {
   console.log("Starting... done!");
   fetch();
-  const id = setInterval(fetch, REFRESH_TIME_MS);
+  // const id = setInterval(fetch, REFRESH_TIME_MS);
   process.on("SIGINT", () => {
     console.log("Stopping... done!");
     clearInterval(id);
