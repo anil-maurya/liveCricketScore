@@ -1,15 +1,38 @@
 import axios from "axios";
 import xlsx from "xlsx";
+import fs from "fs";
+import path from "path";
 
-import { MATCH_ID, REFRESH_TIME_MS } from "./config.js";
+import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "./config.js";
 
 const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 
+const __dirname = path.resolve(path.dirname(""));
+
+const imgDir = path.join(__dirname, IMAGE_DIR);
+
 const fileName = "./score.xlsx";
 
+function clearFile() {
+  try {
+    fs.closeSync(fs.openSync(fileName, "w"));
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+clearFile();
 const file = xlsx.readFile(fileName);
 const sheet_name = file.SheetNames[0];
 const sheet = file.Sheets[sheet_name];
+
+function getImage(name) {
+  if (!name) return "";
+
+  const imageName = name.replace(/ /g, "");
+  const imagePath = `${imgDir}/${imageName}.png`;
+  return imagePath;
+}
 
 const teams = {};
 
@@ -56,9 +79,11 @@ function formatResponse(response) {
   const aoa = [
     ["Series name", seriesName],
     ["Description", seriesDesc],
+    ["Team 1", teamOneName, getImage(teamOneName)],
+    ["Team 2", teamTwoName, getImage(teamTwoName)],
     ["Match state", state],
     ["Match status", status],
-    ["Toss result", ""],
+    ["Toss result"],
     ["Winner", tossWinnerName],
     ["Decision", decision],
     ["Batting team", ""],
@@ -71,14 +96,14 @@ function formatResponse(response) {
     ["Recent overs", recentOvsStats],
     ["Last wicket", lastWicket],
     ["Latest Performance"],
-    [lp1.label],
+    [lp1.label || "Last 3 overs"],
     ["Runs", lp1.runs],
     ["Wickets", lp1.wkts],
-    [lp2.label],
+    [lp2.label || "Last 5 overs"],
     ["Runs", lp2.runs],
     ["Wickets", lp2.wkts],
     ["Striker Batsman", ""],
-    ["Name", batsmanStriker.batName],
+    ["Name", batsmanStriker.batName, getImage(batsmanStriker.batName)],
     ["Runs", batsmanStriker.batRuns],
     ["Balls", batsmanStriker.batBalls],
     ["Dot", batsmanStriker.batDots],
@@ -86,7 +111,7 @@ function formatResponse(response) {
     ["Sixes", batsmanStriker.batSixes],
     ["StrikeRate", batsmanStriker.batStrikeRate],
     ["Non striker Batsman", ""],
-    ["Name", batsmanNonStriker.batName],
+    ["Name", batsmanNonStriker.batName, getImage(batsmanNonStriker.batName)],
     ["Runs", batsmanNonStriker.batRuns],
     ["Balls", batsmanNonStriker.batBalls],
     ["Dot", batsmanNonStriker.batDots],
@@ -97,7 +122,7 @@ function formatResponse(response) {
     ["Balls", partnerShip.balls],
     ["Runs", partnerShip.runs],
     ["Striker Bowler"],
-    ["Name", bowlerStriker.bowlName],
+    ["Name", bowlerStriker.bowlName, getImage(bowlerStriker.bowlName)],
     ["Maidens", bowlerStriker.bowlMaidens],
     ["No Balls", bowlerStriker.bowlNoballs],
     ["Overs", bowlerStriker.bowlOvs],
@@ -106,7 +131,7 @@ function formatResponse(response) {
     ["Wickets", bowlerStriker.bowlWkts],
     ["Economy", bowlerStriker.bowlEcon],
     ["Non Striker Bowler"],
-    ["Name", bowlerNonStriker.bowlName],
+    ["Name", bowlerNonStriker.bowlName, getImage(bowlerNonStriker.bowlName)],
     ["Maidens", bowlerNonStriker.bowlMaidens],
     ["No Balls", bowlerNonStriker.bowlNoballs],
     ["Overs", bowlerNonStriker.bowlOvs],
@@ -147,7 +172,7 @@ function formatResponse(response) {
   return aoa;
 }
 
-function fetch() {
+function pullData() {
   axios
     .get(liveScoreURL)
     .then((response) => {
@@ -165,9 +190,11 @@ function fetch() {
 }
 
 function start() {
-  console.log("Starting... done!");
-  fetch();
-  const id = setInterval(fetch, REFRESH_TIME_MS);
+  console.log("Starting...");
+
+  pullData();
+
+  const id = setInterval(pullData, REFRESH_TIME_MS);
   process.on("SIGINT", () => {
     console.log("Stopping... done!");
     clearInterval(id);
