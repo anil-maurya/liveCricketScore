@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { IMAGE_DIR } from "./config.js";
+import { IMAGE_DIR } from "../config.js";
 
 const __dirname = path.resolve(path.dirname(""));
 const imgDir = path.join(__dirname, IMAGE_DIR);

@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { URL, MATCH_ID } from "./config.js";
+import { URL, MATCH_ID } from "../config.js";
 
 const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 console.log(liveScoreURL);
