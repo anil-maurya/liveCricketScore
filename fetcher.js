@@ -29,8 +29,10 @@ const sheet = file.Sheets[sheet_name];
 function getImage(name) {
   if (!name) return "";
 
-  const imageName = name.replace(/ /g, "");
-  const imagePath = `${imgDir}/${imageName}.png`;
+  let imageName = name.replace(/ /g, "");
+  imageName = imageName + ".png";
+  // const imagePath = `${imgDir}/${imageName}.png`;
+  const imagePath = path.join(__dirname, IMAGE_DIR, imageName);
   return imagePath;
 }
 

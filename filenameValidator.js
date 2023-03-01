@@ -5,10 +5,7 @@ import { IMAGE_DIR } from "./config.js";
 const __dirname = path.resolve(path.dirname(""));
 const imgDir = path.join(__dirname, IMAGE_DIR);
 
-console.log(imgDir);
-
 const files = fs.readdirSync(imgDir);
-
 files.forEach((fileName) => {
   const cleanName = fileName.trim();
   const names = cleanName.split(" ");
@@ -20,8 +17,8 @@ files.forEach((fileName) => {
 
   if (fileName !== name) {
     console.log("Updating..", fileName);
-    const source = `${imgDir}/${fileName}`;
-    const dest = `${imgDir}/${name}`;
+    const source = path(__dirname, IMAGE_DIR, fileName); //`${imgDir}/${fileName}`;
+    const dest = path(__dirname, IMAGE_DIR, name); //`${imgDir}/${name}`;
     fs.renameSync(source, dest);
   }
 });
