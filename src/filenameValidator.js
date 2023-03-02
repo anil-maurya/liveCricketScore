@@ -10,6 +10,7 @@ files.forEach((fileName) => {
   const cleanName = fileName.trim();
   const names = cleanName.split(" ");
   let name = "";
+  // console.log(names)
   names.forEach((word) => {
     const cl = word.charAt(0).toUpperCase();
     name = name + cl + word.slice(1);
@@ -17,8 +18,8 @@ files.forEach((fileName) => {
 
   if (fileName !== name) {
     console.log("Updating..", fileName);
-    const source = path(__dirname, IMAGE_DIR, fileName); //`${imgDir}/${fileName}`;
-    const dest = path(__dirname, IMAGE_DIR, name); //`${imgDir}/${name}`;
+    const source = path.join(__dirname, IMAGE_DIR, fileName); //`${imgDir}/${fileName}`;
+    const dest = path.join(__dirname, IMAGE_DIR, name); //`${imgDir}/${name}`;
     fs.renameSync(source, dest);
   }
 });
