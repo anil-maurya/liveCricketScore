@@ -3,13 +3,11 @@ import xlsx from "xlsx";
 import fs from "fs";
 import path from "path";
 
-import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "./config.js";
+import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "../config.js";
 
 const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 
 const __dirname = path.resolve(path.dirname(""));
-
-const imgDir = path.join(__dirname, IMAGE_DIR);
 
 const fileName = "./score.xlsx";
 
@@ -22,6 +20,7 @@ function clearFile() {
 }
 
 clearFile();
+
 const file = xlsx.readFile(fileName);
 const sheet_name = file.SheetNames[0];
 const sheet = file.Sheets[sheet_name];
@@ -41,10 +40,6 @@ const teams = {};
 function formatResponse(response) {
   const { matchHeader, miniscore } = response.data;
 
-  // if(!matchHeader || !miniscore){
-  //   console.log(response.data)
-  //   throw new Error('Invalid response received.')
-  // }
   const {
     state,
     status,
