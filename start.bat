@@ -1,1 +1,1 @@
-start node fetcher.js
+start node src\fetcher.js
