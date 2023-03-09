@@ -41,19 +41,19 @@ function formatResponse(response) {
   const { matchHeader, miniscore } = response.data;
 
   const {
-    state,
-    status,
-    tossResults,
+    // state,
+    // status,
+    // tossResults,
     team1: { id: id1, shortName: teamOneName } = {},
     team2: { id: id2, shortName: teamTwoName } = {},
     seriesName,
-    seriesDesc,
+    // seriesDesc,
   } = matchHeader;
 
   teams[id1] = teamOneName;
   teams[id2] = teamTwoName;
 
-  const { tossWinnerName, decision } = tossResults || {};
+  // const { tossWinnerName, decision } = tossResults || {};
 
   const {
     batsmanStriker = {},
@@ -66,58 +66,81 @@ function formatResponse(response) {
     partnerShip = {},
     currentRunRate,
     requiredRunRate,
-    lastWicket,
-    latestPerformance,
+    // lastWicket,
+    // latestPerformance,
     matchScoreDetails,
   } = miniscore || {};
 
-  const [lp1 = {}, lp2 = {}] = latestPerformance || [];
+  // const [lp1 = {}, lp2 = {}] = latestPerformance || [];
+
+  const [performanceThisOver, performanceLastOver] = recentOvsStats.split("|");
+
+  const battingTeamName = teams[batTeam.teamId];
+  const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${overs})`;
+
+  let bowlingTeamId;
+
+  Object.keys(teams).some((id) => {
+    if (id !== batTeam.teamId) {
+      bowlingTeamId = id;
+      return true;
+    }
+    return false;
+  });
+
+  const bowlingTeamName = teams[bowlingTeamId];
+
+  const partnerShipValue = `${partnerShip.runs}/${partnerShip.balls}`;
+  const batterScore = `${batsmanStriker.batRuns} (${batsmanStriker.batBalls})`;
+
+  const nonBatterScore = `${batsmanNonStriker.batRuns} (${batsmanNonStriker.batBalls})`;
 
   const aoa = [
-    ["Series name", seriesName],
-    ["Description", seriesDesc],
-    ["Team 1", teamOneName, getImage(teamOneName)],
-    ["Team 2", teamTwoName, getImage(teamTwoName)],
-    ["Match state", state],
-    ["Match status", status],
-    ["Toss result"],
-    ["Winner", tossWinnerName],
-    ["Decision", decision],
-    ["Batting team", ""],
-    ["Name", teams[batTeam.teamId]],
-    ["Score", batTeam.teamScore],
-    ["Wicket", batTeam.teamWkts],
+    ["Status", seriesName],
+    ["Batting team", battingTeamName, getImage(battingTeamName)],
+    ["Score", battingTeamScore],
+    ["Bowling team", bowlingTeamName],
+    ["Score", "Yet to bat"],
     ["Current run rate", currentRunRate],
     ["Required run rate", requiredRunRate],
-    ["Overs", `(${overs})`],
-    ["Recent overs", recentOvsStats],
-    ["Last wicket", lastWicket],
-    ["Latest Performance"],
-    [lp1.label || "Last 3 overs"],
-    ["Runs", lp1.runs],
-    ["Wickets", lp1.wkts],
-    [lp2.label || "Last 5 overs"],
-    ["Runs", lp2.runs],
-    ["Wickets", lp2.wkts],
+    ["Overs", overs],
+    ["Partnership(runs/balls)", partnerShipValue],
+    ["Dot balls", ""],
+    ["Last over", performanceLastOver],
+    ["This over", performanceThisOver],
+    // ["Team 2", teamTwoName, getImage(teamTwoName)],
+    // ["Match state", state],
+    // ["Match status", status],
+    // ["Toss result"],
+    // ["Winner", tossWinnerName],
+    // ["Decision", decision],
+    // ["Batting team", ""],
+    // ["Name", teams[batTeam.teamId],
+    // ("Score", batTeam.teamScore)
+    // ["Wicket", batTeam.teamWkts],
+    // ["Recent overs", recentOvsStats],
+    // ["Last wicket", lastWicket],
+    // ["Latest Performance"],
+    // [lp1.label || "Last 3 overs"],
+    // ["Runs", lp1.runs],
+    // ["Wickets", lp1.wkts],
+    // [lp2.label || "Last 5 overs"],
+    // ["Runs", lp2.runs],
+    // ["Wickets", lp2.wkts],
     ["Striker Batsman", ""],
     ["Name", batsmanStriker.batName, getImage(batsmanStriker.batName)],
-    ["Runs", batsmanStriker.batRuns],
-    ["Balls", batsmanStriker.batBalls],
+    ["Score(runs/balls)", batterScore],
     ["Dot", batsmanStriker.batDots],
     ["Fours", batsmanStriker.batFours],
     ["Sixes", batsmanStriker.batSixes],
     ["StrikeRate", batsmanStriker.batStrikeRate],
     ["Non striker Batsman", ""],
     ["Name", batsmanNonStriker.batName, getImage(batsmanNonStriker.batName)],
-    ["Runs", batsmanNonStriker.batRuns],
-    ["Balls", batsmanNonStriker.batBalls],
+    ["Score(runs/balls)", nonBatterScore],
     ["Dot", batsmanNonStriker.batDots],
     ["Fours", batsmanNonStriker.batFours],
     ["Sixes", batsmanNonStriker.batSixes],
     ["StrikeRate", batsmanNonStriker.batStrikeRate],
-    ["Partnership"],
-    ["Balls", partnerShip.balls],
-    ["Runs", partnerShip.runs],
     ["Striker Bowler"],
     ["Name", bowlerStriker.bowlName, getImage(bowlerStriker.bowlName)],
     ["Maidens", bowlerStriker.bowlMaidens],
