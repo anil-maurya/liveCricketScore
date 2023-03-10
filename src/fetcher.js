@@ -27,7 +27,7 @@ const sheet = file.Sheets[sheet_name];
 
 function getImage(name) {
   if (!name) return "";
-
+  // console.log(name);
   let imageName = name.replace(/ /g, "");
   imageName = imageName + ".png";
   // const imagePath = `${imgDir}/${imageName}.png`;
@@ -35,7 +35,7 @@ function getImage(name) {
   return imagePath;
 }
 
-const teams = {};
+// const teams = {};
 
 function formatResponse(response) {
   const { matchHeader, miniscore } = response.data;
@@ -50,8 +50,18 @@ function formatResponse(response) {
     // seriesDesc,
   } = matchHeader;
 
-  teams[id1] = teamOneName;
-  teams[id2] = teamTwoName;
+  const teams = {
+    [id1]: {
+      name: "",
+      sortName: teamOneName,
+      score: "Yet to bat",
+    },
+    [id2]: {
+      name: "",
+      sortName: teamTwoName,
+      score: "Yet to bat",
+    },
+  };
 
   // const { tossWinnerName, decision } = tossResults || {};
 
@@ -75,32 +85,52 @@ function formatResponse(response) {
 
   const [performanceThisOver, performanceLastOver] = recentOvsStats.split("|");
 
-  const battingTeamName = teams[batTeam.teamId];
+  const battingTeamName = teams[batTeam.teamId].sortName;
   const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${overs})`;
-
+  debugger;
   let bowlingTeamId;
 
   Object.keys(teams).some((id) => {
-    if (id !== batTeam.teamId) {
+    if (id != batTeam.teamId) {
       bowlingTeamId = id;
       return true;
     }
     return false;
   });
 
-  const bowlingTeamName = teams[bowlingTeamId];
+  const bowlingTeam = teams[bowlingTeamId];
 
   const partnerShipValue = `${partnerShip.runs}/${partnerShip.balls}`;
   const batterScore = `${batsmanStriker.batRuns} (${batsmanStriker.batBalls})`;
 
   const nonBatterScore = `${batsmanNonStriker.batRuns} (${batsmanNonStriker.batBalls})`;
 
+  // finding bowling team score
+  const { inningsScoreList } = matchScoreDetails || {};
+
+  const currentInningNum = inningsScoreList.length;
+  if (currentInningNum === 2) {
+    const [, firstInning] = inningsScoreList;
+    const {
+      batTeamId,
+      batTeamName,
+      score,
+      wickets,
+      overs: fiOvers,
+      isDeclared,
+    } = firstInning;
+    const firstInningScore = `${score}-${wickets} (${fiOvers})`;
+    if (firstInningScore) {
+      teams[batTeamId].score = firstInningScore;
+    }
+  }
+
   const aoa = [
     ["Status", seriesName],
     ["Batting team", battingTeamName, getImage(battingTeamName)],
     ["Score", battingTeamScore],
-    ["Bowling team", bowlingTeamName],
-    ["Score", "Yet to bat"],
+    ["Bowling team", bowlingTeam.sortName, getImage(bowlingTeam.sortName)],
+    ["Score", bowlingTeam.score],
     ["Current run rate", currentRunRate],
     ["Required run rate", requiredRunRate],
     ["Overs", overs],
@@ -161,33 +191,31 @@ function formatResponse(response) {
     ["Economy", bowlerNonStriker.bowlEcon],
   ];
 
-  const { inningsScoreList = [] } = matchScoreDetails || {};
-
-  inningsScoreList.forEach((_, index, arr) => {
-    const inning = arr[arr.length - 1 - index];
-    // console.log(l);
-    const {
-      inningsId,
-      batTeamId,
-      score,
-      wickets,
-      overs,
-      isDeclared,
-      isFollowOn,
-      ballNbr,
-    } = inning;
-    const battingTeamName = teams[batTeamId];
-    [
-      ["Inning No", inningsId],
-      ["Batting Team", battingTeamName],
-      ["Score", score],
-      ["Wickets", wickets],
-      ["Overs", overs],
-      ["Declared", isDeclared ? "Yes" : "No"],
-      ["Follow on", isFollowOn ? "Yes" : "No"],
-      ["Balls", ballNbr],
-    ].forEach((row) => aoa.push(row));
-  });
+  // inningsScoreList.forEach((_, index, arr) => {
+  //   const inning = arr[arr.length - 1 - index];
+  //   // console.log(l);
+  //   const {
+  //     inningsId,
+  //     batTeamId,
+  //     score,
+  //     wickets,
+  //     overs,
+  //     isDeclared,
+  //     isFollowOn,
+  //     ballNbr,
+  //   } = inning;
+  //   const battingTeamName = teams[batTeamId];
+  //   [
+  //     ["Inning No", inningsId],
+  //     ["Batting Team", battingTeamName],
+  //     ["Score", score],
+  //     ["Wickets", wickets],
+  //     ["Overs", overs],
+  //     ["Declared", isDeclared ? "Yes" : "No"],
+  //     ["Follow on", isFollowOn ? "Yes" : "No"],
+  //     ["Balls", ballNbr],
+  //   ].forEach((row) => aoa.push(row));
+  // });
 
   return aoa;
 }
@@ -206,7 +234,7 @@ function pullData() {
         console.log(response.status);
       }
     })
-    .catch((error) => console.log("Error", error.message));
+    .catch((error) => console.log("Error", error));
 }
 
 function start() {
