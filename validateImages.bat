@@ -1,1 +1,1 @@
-start node filenameValidator.js
+start node src/filenameValidator.js
