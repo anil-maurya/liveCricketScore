@@ -1,11 +1,12 @@
 import axios from "axios";
 
-const VMIX_URL = "http://localhost:8088/API";
-const QUICK_SHOT_PLAY_DURATION = 1000;
+axios.defaults.baseURL = 'http://localhost:8088/API';
+// const VMIX_URL = "http://localhost:8088/API";
+const QUICK_SHOT_PLAY_DURATION = 2000;
 
 function switchInput(input, func = "cut", duration = 1000) {
   const config = {
-    URL: VMIX_URL,
+    // URL: VMIX_URL,
     METHOD: "GET",
     params: {
       Function: func,
@@ -18,21 +19,20 @@ function switchInput(input, func = "cut", duration = 1000) {
     .then((response) => {
       console.log(response.data);
     })
-    .catch((error) => console.log(error.message));
+    .catch((error) => console.log(error));
 }
 
 function resumePlayback() {
   const input = 2;
-  const fun = "Cut";
-  const duration = 100;
-  switchInput(input, fun, duration);
-  setTimeout(resumePlayback, QUICK_SHOT_PLAY_DURATION);
+  const fun = "Wipe";
+  switchInput(input, fun);
 }
 
 function playFour() {
   const input = 1;
   const fun = "CubeZoom";
   switchInput(input, fun);
+  setTimeout(resumePlayback, QUICK_SHOT_PLAY_DURATION);
 }
 
 function playSix() {}
