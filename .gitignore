@@ -3,4 +3,4 @@ package-lock.json
 config.js
 *.xlsx
 images/*
-*.~*
+ffmpeg/*
