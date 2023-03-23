@@ -15,12 +15,20 @@ NEXT:
 
  - Screen design
  	1. Pre toss - Match Veneu, Squads,  time to start (countdown)
- 	2. Toss in result
+ 	2. Toss result
  	3. Match progess
  		- Remaining status - over left, required run, left wicket, required run rate
  		- dot boll
  		- last wiket and score
- 	4. 4, 6, wicket
+ 	4. Events
+		1. FOUR
+		2. SIX
+		3. WICKET
+		4. over-break
+		5. FIFTY
+		6. HUNDRED
+		7. TEAM_FIFTY
+		8. TEAM_HUNDRED
  	5. Player stats
  		- batter
  		- bowller

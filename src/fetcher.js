@@ -5,15 +5,14 @@ import path from "path";
 
 import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "../config.js";
 
-const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
+const LIVE_SCORE_URL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
+const FILE_NAME = "./score.xlsx";
 
 const __dirname = path.resolve(path.dirname(""));
 
-const fileName = "./score.xlsx";
-
 function clearFile() {
   try {
-    fs.closeSync(fs.openSync(fileName, "w"));
+    fs.closeSync(fs.openSync(FILE_NAME, "w"));
   } catch (error) {
     console.log(error.message);
   }
@@ -21,7 +20,7 @@ function clearFile() {
 
 clearFile();
 
-const file = xlsx.readFile(fileName);
+const file = xlsx.readFile(FILE_NAME);
 const sheet_name = file.SheetNames[0];
 const sheet = file.Sheets[sheet_name];
 
@@ -35,10 +34,27 @@ function getImage(name) {
   return imagePath;
 }
 
-// const teams = {};
+let prevBallNbr = 0;
+function monitorCommentary(commentaryList) {
+  const [currentBall = {}] = commentaryList;
+  const { ballNbr } = currentBall;
+
+  if (ballNbr !== 0 && ballNbr <= prevBallNbr) {
+    return;
+  }
+  prevBallNbr = ballNbr;
+  const { event, commText } = currentBall;
+  if (event === "NONE") {
+    return;
+  }
+  // const [players, result, ...commentary] = commText.split(",");
+  console.log(event, commText);
+}
 
 function formatResponse(response) {
-  const { matchHeader, miniscore } = response.data;
+  const { matchHeader, miniscore, commentaryList } = response.data;
+
+  monitorCommentary(commentaryList);
 
   const {
     // state,
@@ -113,11 +129,11 @@ function formatResponse(response) {
     const [, firstInning] = inningsScoreList;
     const {
       batTeamId,
-      batTeamName,
+      // batTeamName,
       score,
       wickets,
       overs: fiOvers,
-      isDeclared,
+      // isDeclared,
     } = firstInning;
     const firstInningScore = `${score}-${wickets} (${fiOvers})`;
     if (firstInningScore) {
@@ -217,19 +233,21 @@ function formatResponse(response) {
   //   ].forEach((row) => aoa.push(row));
   // });
 
+  //  COMMENTARY MONITORING..
+
   return aoa;
 }
 
 function pullData() {
   axios
-    .get(liveScoreURL)
+    .get(LIVE_SCORE_URL)
     .then((response) => {
       if (response.status === 200) {
         const aoa = formatResponse(response);
         xlsx.utils.sheet_add_aoa(sheet, aoa, { origin: "A1" });
-        xlsx.writeFile(file, fileName);
+        xlsx.writeFile(file, FILE_NAME);
         const date = new Date();
-        console.log("Refreshed..", date.toLocaleTimeString());
+        // console.log("Refreshed..", date.toLocaleTimeString());
       } else {
         console.log(response.status);
       }

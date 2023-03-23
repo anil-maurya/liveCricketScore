@@ -1,12 +1,10 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:8088/API';
-// const VMIX_URL = "http://localhost:8088/API";
+axios.defaults.baseURL = "http://localhost:8088/API";
 const QUICK_SHOT_PLAY_DURATION = 2000;
 
 function switchInput(input, func = "cut", duration = 1000) {
   const config = {
-    // URL: VMIX_URL,
     METHOD: "GET",
     params: {
       Function: func,
