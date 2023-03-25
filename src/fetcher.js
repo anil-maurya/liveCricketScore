@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "../config.js";
+import { toggleInput } from "./vmixTriggers";
 
 const LIVE_SCORE_URL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 const FILE_NAME = "./score.xlsx";
@@ -34,6 +35,20 @@ function getImage(name) {
   return imagePath;
 }
 
+/**
+1. NONE
+2. MAIDEN_OVER
+3. FOUR
+4. SIX
+5. WICKET
+6. over-break
+7. FIFTY
+8. HUNDRED
+9. TEAM_FIFTY
+10. TEAM_HUNDRED
+11. TEAM_HUNDRED,SIX
+*/
+
 let prevBallNbr = 0;
 function monitorCommentary(commentaryList) {
   const [currentBall = {}] = commentaryList;
@@ -44,11 +59,7 @@ function monitorCommentary(commentaryList) {
   }
   prevBallNbr = ballNbr;
   const { event, commText } = currentBall;
-  if (event === "NONE") {
-    return;
-  }
-  // const [players, result, ...commentary] = commText.split(",");
-  console.log(event, commText);
+  toggleInput(event);
 }
 
 function formatResponse(response) {

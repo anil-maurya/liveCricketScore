@@ -1,3 +1,4 @@
-import { playFour } from "./vmixTriggers.js";
+import { toggleInput } from "./vmixTriggers.js";
 
-playFour();
+const event = "NONE";
+toggleInput(event);

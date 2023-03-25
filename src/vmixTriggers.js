@@ -21,18 +21,35 @@ function switchInput(input, func = "cut", duration = 1000) {
 }
 
 function resumePlayback() {
-  const input = 2;
+  const input = 1;
   const fun = "Wipe";
   switchInput(input, fun);
 }
 
-function playFour() {
-  const input = 1;
-  const fun = "CubeZoom";
+function toggleInput(event) {
+  let input;
+  let fun = "CubeZoom";
+
+  switch (event) {
+    case "FOUR":
+      input = 2;
+      break;
+    case "SIX":
+      input = 3;
+      break;
+    case "WICKET":
+      input = 4;
+      break;
+    case "FIFTY":
+      input = 5;
+      break;
+    default:
+      console.log("Unknown event", event);
+      return;
+  }
+
   switchInput(input, fun);
   setTimeout(resumePlayback, QUICK_SHOT_PLAY_DURATION);
 }
 
-function playSix() {}
-
-export { resumePlayback, playFour, playSix };
+export { toggleInput };
