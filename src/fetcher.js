@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "../config.js";
-import { toggleInput } from "./vmixTriggers";
+import { toggleInput } from "./vmixTriggers.js";
 
 const LIVE_SCORE_URL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 const FILE_NAME = "./score.xlsx";

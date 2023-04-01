@@ -1,7 +1,7 @@
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:8088/API";
-const QUICK_SHOT_PLAY_DURATION = 2000;
+const QUICK_SHOT_PLAY_DURATION = 3000;
 
 function switchInput(input, func = "cut", duration = 1000) {
   const config = {
@@ -27,6 +27,7 @@ function resumePlayback() {
 }
 
 function toggleInput(event) {
+  // console.log({event})
   let input;
   let fun = "CubeZoom";
 
@@ -42,6 +43,9 @@ function toggleInput(event) {
       break;
     case "FIFTY":
       input = 5;
+      break;
+    case "HUNDRED":
+      input = 6;
       break;
     default:
       console.log("Unknown event", event);
