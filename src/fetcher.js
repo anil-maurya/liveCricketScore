@@ -110,7 +110,8 @@ function formatResponse(response) {
 
   // const [lp1 = {}, lp2 = {}] = latestPerformance || [];
 
-  const [performanceThisOver, performanceLastOver] = recentOvsStats.split("|");
+  const [, performanceLastOver = "", performanceThisOver = ""] =
+    recentOvsStats.split("|");
 
   const battingTeamName = teams[batTeam.teamId].sortName;
   const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${overs})`;
@@ -163,8 +164,8 @@ function formatResponse(response) {
     ["Overs", overs],
     ["Partnership(runs/balls)", partnerShipValue],
     ["Dot balls", ""],
-    ["Last over", performanceLastOver],
-    ["This over", performanceThisOver],
+    ["Last over", ...performanceLastOver.split(" ")],
+    ["This over", ...performanceThisOver.split(" ")],
     // ["Team 2", teamTwoName, getImage(teamTwoName)],
     // ["Match state", state],
     // ["Match status", status],
@@ -258,7 +259,7 @@ function pullData() {
         xlsx.utils.sheet_add_aoa(sheet, aoa, { origin: "A1" });
         xlsx.writeFile(file, FILE_NAME);
         const date = new Date();
-        // console.log("Refreshed..", date.toLocaleTimeString());
+        console.log("Refreshed..", date.toLocaleTimeString());
       } else {
         console.log(response.status);
       }
