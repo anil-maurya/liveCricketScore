@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import { MATCH_ID, REFRESH_TIME_MS, IMAGE_DIR } from "../config.js";
-import { toggleInput } from "./vmixTriggers";
+import { toggleInput } from "./vmixTriggers.js";
 
 const LIVE_SCORE_URL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 const FILE_NAME = "./score.xlsx";
@@ -110,7 +110,8 @@ function formatResponse(response) {
 
   // const [lp1 = {}, lp2 = {}] = latestPerformance || [];
 
-  const [performanceThisOver, performanceLastOver] = recentOvsStats.split("|");
+  const [, performanceLastOver = "", performanceThisOver = ""] =
+    recentOvsStats.split("|");
 
   const battingTeamName = teams[batTeam.teamId].sortName;
   const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${overs})`;
@@ -163,8 +164,8 @@ function formatResponse(response) {
     ["Overs", overs],
     ["Partnership(runs/balls)", partnerShipValue],
     ["Dot balls", ""],
-    ["Last over", performanceLastOver],
-    ["This over", performanceThisOver],
+    ["Last over", ...performanceLastOver.split(" ")],
+    ["This over", ...performanceThisOver.split(" ")],
     // ["Team 2", teamTwoName, getImage(teamTwoName)],
     // ["Match state", state],
     // ["Match status", status],
@@ -258,7 +259,7 @@ function pullData() {
         xlsx.utils.sheet_add_aoa(sheet, aoa, { origin: "A1" });
         xlsx.writeFile(file, FILE_NAME);
         const date = new Date();
-        // console.log("Refreshed..", date.toLocaleTimeString());
+        console.log("Refreshed..", date.toLocaleTimeString());
       } else {
         console.log(response.status);
       }
