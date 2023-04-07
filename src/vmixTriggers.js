@@ -35,6 +35,9 @@ function toggleInput(event) {
     case "over-break,FOUR":
       input = 4;
       break;
+    case "over-break,TEAM_HUNDRED,FOUR":
+      input = 4;
+      break;
     case "FOUR":
       input = 2;
       break;
