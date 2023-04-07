@@ -1,12 +1,13 @@
 import puppeteer from "puppeteer";
 import { URL, MATCH_ID } from "../config.js";
+import saveData from "./utils.js";
 
 const liveScoreURL = `https://www.cricbuzz.com/api/cricket-match/commentary/${MATCH_ID}`;
 console.log(liveScoreURL);
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null,
   });
   const page = await browser.newPage(URL);
@@ -36,7 +37,7 @@ console.log(liveScoreURL);
       response
         .json()
         .then((data) => {
-          console.log(data);
+          saveData(data);
         })
         .catch((err) => {
           console.log(err.message);
