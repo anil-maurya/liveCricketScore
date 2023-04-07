@@ -11,6 +11,16 @@ const FILE_NAME = "./score.xlsx";
 
 const __dirname = path.resolve(path.dirname(""));
 
+function getMatchStatus(overs, matchHeader) {
+  const { state, status } = matchHeader || {};
+
+  if (overs > 2) {
+    return state;
+  }
+
+  return status;
+}
+
 function clearFile() {
   try {
     fs.closeSync(fs.openSync(FILE_NAME, "w"));
@@ -62,8 +72,8 @@ function monitorCommentary(commentaryList) {
   toggleInput(event);
 }
 
-function formatResponse(response) {
-  const { matchHeader, miniscore, commentaryList } = response.data;
+function formatResponse(data) {
+  const { matchHeader, miniscore, commentaryList } = data;
 
   monitorCommentary(commentaryList);
 
@@ -153,8 +163,10 @@ function formatResponse(response) {
     }
   }
 
+  const matchStatus = getMatchStatus(overs, matchHeader);
+
   const aoa = [
-    ["Status", seriesName],
+    ["Status", matchStatus],
     ["Batting team", battingTeamName, getImage(battingTeamName)],
     ["Score", battingTeamScore],
     ["Bowling team", bowlingTeam.sortName, getImage(bowlingTeam.sortName)],
@@ -250,6 +262,14 @@ function formatResponse(response) {
   return aoa;
 }
 
+function saveData(data) {
+  const aoa = formatResponse(data);
+  xlsx.utils.sheet_add_aoa(sheet, aoa, { origin: "A1" });
+  xlsx.writeFile(file, FILE_NAME);
+  const date = new Date();
+  console.log("Refreshed..", date.toLocaleTimeString());
+}
+
 function pullData() {
   axios
     .get(LIVE_SCORE_URL)
@@ -279,4 +299,4 @@ function start() {
   });
 }
 
-start();
+export default saveData;

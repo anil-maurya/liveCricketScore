@@ -32,8 +32,14 @@ function toggleInput(event) {
   let fun = "CubeZoom";
 
   switch (event) {
+    case "over-break,FOUR":
+      input = 4;
+      break;
     case "FOUR":
       input = 2;
+      break;
+    case "over-break,SIX":
+      input = 3;
       break;
     case "SIX":
       input = 3;
@@ -48,7 +54,7 @@ function toggleInput(event) {
       input = 6;
       break;
     default:
-      console.log("Unknown event", event);
+      console.log({ event });
       return;
   }
 
