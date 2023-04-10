@@ -11,6 +11,18 @@ const FILE_NAME = "./score.xlsx";
 
 const __dirname = path.resolve(path.dirname(""));
 
+function getShortName(name) {
+  if (!name || typeof name !== "string") return name;
+  const namesArray = name.trim().split(" ");
+
+  if (namesArray.length < 2) return name;
+
+  const firstName = namesArray[0][0];
+  const lastName = namesArray[namesArray.length - 1];
+
+  return `${firstName}. ${lastName}`;
+}
+
 function getMatchStatus(overs, matchHeader) {
   const { state, status } = matchHeader || {};
 
@@ -139,9 +151,9 @@ function formatResponse(data) {
   const bowlingTeam = teams[bowlingTeamId];
 
   const partnerShipValue = `${partnerShip.runs}/${partnerShip.balls}`;
-  const batterScore = `${batsmanStriker.batRuns} (${batsmanStriker.batBalls})`;
+  // const batterScore = `${batsmanStriker.batRuns} (${batsmanStriker.batBalls})`;
 
-  const nonBatterScore = `${batsmanNonStriker.batRuns} (${batsmanNonStriker.batBalls})`;
+  // const nonBatterScore = `${batsmanNonStriker.batRuns} (${batsmanNonStriker.batBalls})`;
 
   // finding bowling team score
   const { inningsScoreList } = matchScoreDetails || {};
@@ -200,21 +212,42 @@ function formatResponse(data) {
     // ["Runs", lp2.runs],
     // ["Wickets", lp2.wkts],
     ["Striker Batsman", ""],
-    ["Name", batsmanStriker.batName, getImage(batsmanStriker.batName)],
-    ["Score(runs/balls)", batterScore],
+    [
+      "Name",
+      getShortName(batsmanStriker.batName),
+      getImage(batsmanStriker.batName),
+    ],
+    // ["Score(runs/balls)", batterScore],
+    [
+      "Score(runs/balls)",
+      batsmanStriker.batRuns,
+      `(${batsmanStriker.batBalls})`,
+    ],
     ["Dot", batsmanStriker.batDots],
     ["Fours", batsmanStriker.batFours],
     ["Sixes", batsmanStriker.batSixes],
     ["StrikeRate", batsmanStriker.batStrikeRate],
     ["Non striker Batsman", ""],
-    ["Name", batsmanNonStriker.batName, getImage(batsmanNonStriker.batName)],
-    ["Score(runs/balls)", nonBatterScore],
+    [
+      "Name",
+      getShortName(batsmanNonStriker.batName),
+      getImage(batsmanNonStriker.batName),
+    ],
+    [
+      "Score(runs/balls)",
+      batsmanNonStriker.batRuns,
+      `(${batsmanNonStriker.batBalls})`,
+    ],
     ["Dot", batsmanNonStriker.batDots],
     ["Fours", batsmanNonStriker.batFours],
     ["Sixes", batsmanNonStriker.batSixes],
     ["StrikeRate", batsmanNonStriker.batStrikeRate],
     ["Striker Bowler"],
-    ["Name", bowlerStriker.bowlName, getImage(bowlerStriker.bowlName)],
+    [
+      "Name",
+      getShortName(bowlerStriker.bowlName),
+      getImage(bowlerStriker.bowlName),
+    ],
     ["Maidens", bowlerStriker.bowlMaidens],
     ["No Balls", bowlerStriker.bowlNoballs],
     ["Overs", `(${bowlerStriker.bowlOvs})`],
@@ -223,7 +256,11 @@ function formatResponse(data) {
     ["Wickets", bowlerStriker.bowlWkts],
     ["Economy", bowlerStriker.bowlEcon],
     ["Non Striker Bowler"],
-    ["Name", bowlerNonStriker.bowlName, getImage(bowlerNonStriker.bowlName)],
+    [
+      "Name",
+      getShortName(bowlerNonStriker.bowlName),
+      getImage(bowlerNonStriker.bowlName),
+    ],
     ["Maidens", bowlerNonStriker.bowlMaidens],
     ["No Balls", bowlerNonStriker.bowlNoballs],
     ["Overs", bowlerNonStriker.bowlOvs],
