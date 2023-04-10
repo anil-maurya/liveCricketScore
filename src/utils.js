@@ -250,7 +250,7 @@ function formatResponse(data) {
     ],
     ["Maidens", bowlerStriker.bowlMaidens],
     ["No Balls", bowlerStriker.bowlNoballs],
-    ["Overs", `(${bowlerStriker.bowlOvs})`],
+    ["Overs", bowlerStriker.bowlOvs],
     ["Runs", bowlerStriker.bowlRuns],
     ["Wides", bowlerStriker.bowlWides],
     ["Wickets", bowlerStriker.bowlWkts],
