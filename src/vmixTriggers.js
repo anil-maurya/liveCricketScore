@@ -1,7 +1,7 @@
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:8088/API";
-const QUICK_SHOT_PLAY_DURATION = 3000;
+const QUICK_SHOT_PLAY_DURATION = 6000;
 
 function switchInput(input, func = "cut", duration = 1000) {
   const config = {
