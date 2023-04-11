@@ -147,11 +147,11 @@ function formatResponse(data) {
   const [, performanceLastOver = "", performanceThisOver = ""] =
     recentOvsStats.split("|");
 
-  console.log(typeof overs);
-
   const battingTeamName = teams[batTeam.teamId].sortName;
-  const roundedOvers = roundOfOvers(overs);
-  const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${roundedOvers})`;
+
+  const battingTeamScore = `${batTeam.teamScore}-${
+    batTeam.teamWkts
+  } (${roundOfOvers(overs)})`;
 
   let bowlingTeamId;
 
@@ -200,7 +200,7 @@ function formatResponse(data) {
     ["Score", bowlingTeam.score],
     ["Current run rate", currentRunRate],
     ["Required run rate", requiredRunRate],
-    ["Overs", overs],
+    ["Overs", roundOfOvers(overs)],
     ["Partnership(runs/balls)", partnerShipValue],
     ["Dot balls", ""],
     ["Last over", performanceLastOver],
