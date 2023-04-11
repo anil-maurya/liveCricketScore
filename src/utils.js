@@ -132,7 +132,7 @@ function formatResponse(data) {
     bowlerStriker = {},
     bowlerNonStriker = {},
     overs,
-    recentOvsStats,
+    recentOvsStats = "",
     batTeam = {},
     partnerShip = {},
     currentRunRate,
