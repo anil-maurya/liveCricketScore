@@ -7,9 +7,9 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug fetcher",
+      "name": "Debug index",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/fetcher.js"
+      "program": "${workspaceFolder}/src/index.js"
     }
   ]
 }

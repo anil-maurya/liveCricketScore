@@ -11,6 +11,14 @@ const FILE_NAME = "./score.xlsx";
 
 const __dirname = path.resolve(path.dirname(""));
 
+function roundOfOvers(overs) {
+  const intOvers = Math.floor(overs);
+  const calculatedBalls = (overs - intOvers) * 10;
+  const calculatedOvers = calculatedBalls > 5 ? intOvers + 1 : overs;
+
+  return calculatedOvers;
+}
+
 function getShortName(name) {
   if (!name || typeof name !== "string") return name;
   const namesArray = name.trim().split(" ");
@@ -26,11 +34,15 @@ function getShortName(name) {
 function getMatchStatus(overs, matchHeader) {
   const { state, status } = matchHeader || {};
 
-  if (overs > 2) {
-    return state;
-  }
+  // console.log({ overs, state, status });
 
-  return status;
+  // console.log(overs > 2);
+
+  // if (overs < 2) {
+  //   return state;
+  // }
+
+  return [state, status];
 }
 
 function clearFile() {
@@ -135,9 +147,12 @@ function formatResponse(data) {
   const [, performanceLastOver = "", performanceThisOver = ""] =
     recentOvsStats.split("|");
 
+  console.log(typeof overs);
+
   const battingTeamName = teams[batTeam.teamId].sortName;
-  const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${overs})`;
-  debugger;
+  const roundedOvers = roundOfOvers(overs);
+  const battingTeamScore = `${batTeam.teamScore}-${batTeam.teamWkts} (${roundedOvers})`;
+
   let bowlingTeamId;
 
   Object.keys(teams).some((id) => {
@@ -169,7 +184,7 @@ function formatResponse(data) {
       overs: fiOvers,
       // isDeclared,
     } = firstInning;
-    const firstInningScore = `${score}-${wickets} (${fiOvers})`;
+    const firstInningScore = `${score}-${wickets} (${roundOfOvers(fiOvers)})`;
     if (firstInningScore) {
       teams[batTeamId].score = firstInningScore;
     }
@@ -178,7 +193,7 @@ function formatResponse(data) {
   const matchStatus = getMatchStatus(overs, matchHeader);
 
   const aoa = [
-    ["Status", matchStatus],
+    ["Status", ...matchStatus],
     ["Batting team", battingTeamName, getImage(battingTeamName)],
     ["Score", battingTeamScore],
     ["Bowling team", bowlingTeam.sortName, getImage(bowlingTeam.sortName)],
